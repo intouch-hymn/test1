@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  # Frontend Vue.js
+  frontend:
+    build:
+      context: ./testf # ชี้ไปที่ frontend folder
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Backend .NET API
+  api:
+    build:
+      context: ./Api # ชี้ไปที่ Api folder
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=db;Database=ApiDb;Username=postgres;Password=password123
+      - Jwt__Key=your-super-secret-jwt-key-must-be-at-least-32-characters-long-for-security
+      - Jwt__Issuer=YourApiName
+      - Jwt__Audience=YourApiUsers
+      - Jwt__ExpireMinutes=60
+    depends_on:
+      - db
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Database PostgreSQL
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=ApiDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

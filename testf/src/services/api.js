@@ -14,14 +14,14 @@ const apiClient = axios.create({
 // Request interceptor - เพิ่ม JWT token ในทุก request
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken')
+    const token = localStorage.getItem('authToken') // ดึง token จาก localStorage
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+      config.headers.Authorization = `Bearer ${token}` // เพิ่ม token ใน header
     }
-    return config
+    return config // ส่ง config กลับไป
   },
   (error) => {
-    return Promise.reject(error)
+    return Promise.reject(error) // ถ้ามี error ใน request ให้ reject
   },
 )
 

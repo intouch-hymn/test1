@@ -65,7 +65,6 @@ export default {
     }
   },
 
-  // Methods - functions that can be called
   methods: {
     async handleLogin() {
       this.loading = true

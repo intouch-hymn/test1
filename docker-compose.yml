@@ -6,6 +6,7 @@ services:
     build:
       context: ./testf # ชี้ไปที่ frontend folder
       dockerfile: Dockerfile
+    container_name: vue_frontend
     ports:
       - "3000:80"
     depends_on:
@@ -17,8 +18,9 @@ services:
   # Backend .NET API
   api:
     build:
-      context: ./Api # ชี้ไปที่ Api folder
+      context: ./Api
       dockerfile: Dockerfile
+    container_name: dotnet_api
     ports:
       - "8080:8080"
     environment:
@@ -42,6 +44,7 @@ services:
       - POSTGRES_DB=ApiDb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password123
+    container_name: postgres_db
     ports:
       - "5432:5432"
     volumes:
